@@ -450,19 +450,17 @@ int main(void)
 				sei();//割込み許可					
 				ResetRespondent(0x08,0b00001111);//レディー				
 			}
-			
-			
-			//点数リセット
-			if (PINC & 0b00000100)
-			{
-				for (int i=0;i<10;i++)
-				{
-					point[i]=0;
-				}
-				Show_score();
-			}
 
 		
+		}
+		//点数リセット
+		if (~PINC & 0b00000100 && ~PINC & 0b00010000)
+		{
+			for (int i=0;i<10;i++)
+			{
+				point[i]=0;
+			}
+			Show_score();
 		}
     }
 }
