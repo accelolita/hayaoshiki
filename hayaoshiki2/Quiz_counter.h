@@ -11,12 +11,30 @@ unsigned char volume;	//ボリューム
 char status=0b00001110;//standby
 char setting_cursor=0;
 
-
-void Write_score(char num);
+void Save_score();
+void Load_score();
 void Show_score();
+void Write_score(char num);
 void Write_volume();
 void Write_status(char status);
 
+void Save_score()
+{
+	for (uint8_t i=0;i<10;i++)
+	{
+		eeprom_busy_wait();
+		eeprom_write_byte((uint8_t *)(i+1),point[i]);
+	}	
+}
+
+void Load_score()
+{
+	for (uint8_t i=0;i<10;i++)
+	{
+		eeprom_busy_wait();
+		point[i]=eeprom_read_byte((uint8_t *)(i+1));
+	}
+}
 
 void Show_score()
 {

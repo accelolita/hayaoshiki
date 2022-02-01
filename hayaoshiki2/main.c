@@ -144,11 +144,14 @@ int main(void)
 	I2C_Init();
 	lcd_init();
 	adc_init();
-	//volume取得
-	
+	//volume 取得
 	volume=eep_read_byte(0x00);
-	//volume=1;
-		
+	if (volume<=0 || volume>30)
+	{
+		volume=20;
+	}
+	//配点取得
+	Load_score();
 	_delay_ms(500);
 
 	lcd_set_cg();
@@ -241,6 +244,7 @@ int main(void)
 				Write_status(14);
 				//設定保存
 				eep_write_byte(0,volume);
+				Save_score();
 				loop_until_bit_is_set(PIND,5);
 				goto reset;
 			}
@@ -255,7 +259,7 @@ int main(void)
 						Write_score(i);
 					}
 				}
-				//Save_score();
+				Save_score();
 				cli();//割込み禁止
 				ResetRespondent(0x07,0b00001110);//スタンバイ				
 			}
@@ -281,6 +285,7 @@ int main(void)
 				Write_status(14);//スタンバイ
 				//設定保存
 				eep_write_byte(0,volume);	
+				Save_score();
 				loop_until_bit_is_set(PIND,6);
 				goto reset;
 			}
@@ -444,6 +449,17 @@ int main(void)
 				TIMSK0 = 0b0000100;	//タイマー0B割り込み許可
 				sei();//割込み許可					
 				ResetRespondent(0x08,0b00001111);//レディー				
+			}
+			
+			
+			//点数リセット
+			if (PINC & 0b00000100)
+			{
+				for (int i=0;i<10;i++)
+				{
+					point[i]=0;
+				}
+				Show_score();
 			}
 
 		
